@@ -47,10 +47,13 @@ const Adapter = function Adapter () {
     }
 }
 
-const Client = function Client (server, port, version) {
+const Client = function Client (server, port, version, cache) {
     this.server = server
     this.port = port;
     this.version = version;
+
+    this.cache = cache
+
 
     const getClient = () => {
         return new elasticsearch.Client({
@@ -63,7 +66,7 @@ const Client = function Client (server, port, version) {
     const adapter = new Adapter();
     const client = getClient();
 
-    const result = async ({ bodyQuery, bodySource }) => {
+    const search = async ({ bodyQuery, bodySource }) => {
         const query = {
             bool: {
                 filter: adapter.adaptFilters(bodyQuery)
@@ -81,10 +84,25 @@ const Client = function Client (server, port, version) {
     }
 
     return {
-        result,
+        search,
         query: adapter.adaptFilters
     }
 }
 
+const Presentor = function Presentor () {
+    const hits = (response) => {
+        if (response.hits && response.hits.hits) {
+            return response.hits.hits.map(hit => hit._source);
+        } else {
+            return [];
+        }
+    }
+
+    return {
+        hits
+    };
+}
+
 module.exports.Adapter = Adapter
 module.exports.Client = Client
+module.exports.Presentor = Presentor

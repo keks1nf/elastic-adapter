@@ -6,7 +6,8 @@ const host = 'localhost';
 var express = require('express')
 var bodyParser = require('body-parser')
 var elasticsearch = require('elasticsearch');
-const { Client } = require('./data/elastic/elastic')
+const { Client, Presentor } = require('./data/elastic/elastic')
+const { ClientCacheDecorator } = require('./data/elastic/cacheDecorator')
 
 var app = express()
 
@@ -20,26 +21,27 @@ app.use(bodyParser.json({ type: 'application/json' }))
 // // parse an HTML body into a string
 // app.use(bodyParser.text({ type: 'text/html' }))
 
-function ElasticApi()
-{
-    const post = async (req, res) => {
-        const c = new Client('192.168.176.2', '9200', 6.8)
+function ElasticHits() {
+    const client = new ClientCacheDecorator(new Client('192.168.192.3', '9200', 6.8))
 
+    const post = async (req, res) => {
         const bodyQuery = req.body && req.body.query
         const bodySource = req.body && req.body.source
-        const response = await c.result({ bodyQuery, bodySource })
+        const response = await client.search({ bodyQuery, bodySource })
 
-        if (!response.hits.hits) {
+        const hits = new Presentor().hits(response);
+
+        if (!hits.length) {
             res.send({
                 error: 'Empty result',
-                data: null,
-                query: c.query({ bodyQuery, bodySource })
+                data: hits,
+                query: client.query({ bodyQuery, bodySource })
             })
         } else {
             res.send({
                 error: null,
-                data: response.hits.hits.map(hit => hit._source),
-                query: c.query({ bodyQuery, bodySource })
+                data: hits,
+                query: client.query({ bodyQuery, bodySource })
             })
         }
     }
@@ -51,9 +53,9 @@ function ElasticApi()
 
 const routes = [
     {
-        route: '/api/v1/elastic',
-        handler: new ElasticApi()
-    }
+        route: '/api/v1/elastic/hits',
+        handler: new ElasticHits(),
+    },
 ]
 
 
