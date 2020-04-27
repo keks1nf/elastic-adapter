@@ -20,40 +20,12 @@ app.use(bodyParser.json({ type: 'application/json' }))
 // // parse an HTML body into a string
 // app.use(bodyParser.text({ type: 'text/html' }))
 
-function ElasticHits() {
-    const client = new ClientCacheDecorator(new Client('192.168.192.3', '9200', 6.8))
 
-    const post = async (req, res) => {
-        const bodyQuery = req.body && req.body.query
-        const bodySource = req.body && req.body.source
-        const response = await client.search({ bodyQuery, bodySource })
-
-        const hits = new Presentor().hits(response);
-
-        if (!hits.length) {
-            res.send({
-                error: 'Empty result',
-                data: hits,
-                query: client.query({ bodyQuery, bodySource })
-            })
-        } else {
-            res.send({
-                error: null,
-                data: hits,
-                query: client.query({ bodyQuery, bodySource })
-            })
-        }
-    }
-
-    return {
-        post
-    };
-}
 
 const routes = [
     {
         route: '/api/v1/elastic/hits',
-        handler: new ElasticHits(),
+        handler: new (require('./src/routes/elastic/Hits.js')),
     },
 ]
 
