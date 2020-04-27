@@ -1,8 +1,7 @@
-const { Adapter } = require('./elastic')
+const { Adapter } = require('./src/elastic/elastic')
 const process = require('process');
 
 const adapter = new Adapter();
-
 const command = process.argv[2]
 
 function adapt(argv) {

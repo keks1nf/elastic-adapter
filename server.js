@@ -6,8 +6,7 @@ const host = 'localhost';
 var express = require('express')
 var bodyParser = require('body-parser')
 var elasticsearch = require('elasticsearch');
-const { Client, Presentor } = require('./data/elastic/elastic')
-const { ClientCacheDecorator } = require('./data/elastic/cacheDecorator')
+const { Client, Presentor, ClientCacheDecorator } = require('./src/elastic/elastic')
 
 var app = express()
 
