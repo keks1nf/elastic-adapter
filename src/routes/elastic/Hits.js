@@ -1,28 +1,31 @@
 'use strict'
-const { Client, Presentor, ClientCacheDecorator } = require('../../elastic/elastic')
-const { host, port, version } = require('../../constants/elastic.js')
+const { Presentor, ClientsRegister, Adapter } = require('../../elastic/elastic')
+// const { host, port, version } = require('../../constants/elastic.js')
+// const md5 = require('md5');
 
 module.exports = function Hits() {
-    const client = new ClientCacheDecorator(new Client(host, port, version))
+    const register = ClientsRegister();
+    const adapter = new Adapter();
 
     const post = async (req, res) => {
         const bodyQuery = req.body && req.body.query
         const bodySource = req.body && req.body.source
-        const response = await client.search({ bodyQuery, bodySource })
+        const serverParams = req.body && req.body.serverParams
 
+        const response = await register(serverParams).search({ bodyQuery, bodySource })
         const hits = new Presentor().hits(response);
 
         if (!hits.length) {
             res.send({
                 error: 'Empty result',
                 data: hits,
-                query: client.query({ bodyQuery, bodySource })
+                query: adapter.adaptFilters(bodyQuery)
             })
         } else {
             res.send({
                 error: null,
                 data: hits,
-                query: client.query({ bodyQuery, bodySource })
+                query: adapter.adaptFilters(bodyQuery)
             })
         }
     }

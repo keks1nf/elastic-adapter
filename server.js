@@ -6,7 +6,7 @@ const host = 'localhost';
 var express = require('express')
 var bodyParser = require('body-parser')
 var elasticsearch = require('elasticsearch');
-const { Client, Presentor, ClientCacheDecorator } = require('./src/elastic/elastic')
+
 
 var app = express()
 
@@ -26,6 +26,9 @@ const routes = [
     {
         route: '/api/v1/elastic/hits',
         handler: new (require('./src/routes/elastic/Hits.js')),
+    }, {
+        route: '/api/v1/elastic/count',
+        handler: new (require('./src/routes/elastic/Count.js')),
     },
 ]
 

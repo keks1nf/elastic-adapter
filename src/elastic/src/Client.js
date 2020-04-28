@@ -3,7 +3,7 @@
 const elasticsearch = require('elasticsearch');
 const Adapter = require('./Adapter')
 
-module.exports = function Client (server, port, version, cache) {
+module.exports = function Client (server, port, version, cache, index, type) {
     this.server = server
     this.port = port;
     this.version = version;
@@ -29,17 +29,34 @@ module.exports = function Client (server, port, version, cache) {
         }
 
         return await client.search({
-          index: 'user_search*',
-          type: '_doc',
+          index: this.index || 'user_search*',
+          type: this.type || '_doc',
           body: {
               query,
               _source: bodySource
           }
-        })
+        });
+    };
+
+    const count = async ({ bodyQuery }) => {
+        const query = {
+            bool: {
+                filter: adapter.adaptFilters(bodyQuery)
+            }
+        }
+
+        return await client.count({
+          index: this.index || 'user_search*',
+          type: this.type || '_doc',
+          body: {
+              query
+          }
+        });
     }
 
     return {
         search,
+        count,
         query: adapter.adaptFilters
     }
 }
