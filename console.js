@@ -2,12 +2,12 @@ const { Adapter } = require('./src/elastic/elastic')
 const process = require('process');
 
 const adapter = new Adapter();
-const command = process.argv[2]
+const command = process.argv[2];
 
 function adapt(argv) {
-    const query = argv[3]
-    const pretty = argv[4]
-    const adapted = adapter.adaptFilters(JSON.parse(query))
+    const query = argv[3];
+    const pretty = argv[4];
+    const adapted = adapter.adaptFilters(JSON.parse(query));
 
     if (pretty) {
         process.stdout.write(JSON.stringify(adapted, null, 2));

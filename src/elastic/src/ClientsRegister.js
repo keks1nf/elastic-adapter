@@ -14,16 +14,14 @@ module.exports = function ClientsRegister () {
             port,
             version,
             ...serverParams
-        }
-        const hash = md5(`${params.host}${params.port}${params.params}`)
+        };
+        const hash = md5(`${params.host}${params.port}${params.params}`);
 
         if (clients[hash]) {
-            console.log(`${hash} client get`)
             return clients[hash];
         } else {
-            console.log(`${hash} client set`)
             clients[hash] = new ClientCacheDecorator(new Client(params.host, params.port, params.version));
             return clients[hash];
         }
-    }
+    };
 }

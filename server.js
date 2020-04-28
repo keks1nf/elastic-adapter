@@ -8,19 +8,17 @@ var bodyParser = require('body-parser')
 var elasticsearch = require('elasticsearch');
 
 
-var app = express()
+var app = express();
 
-app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.urlencoded({ extended: false }));
 // parse various different custom JSON types as JSON
-app.use(bodyParser.json({ type: 'application/json' }))
+app.use(bodyParser.json({ type: 'application/json' }));
 
 // // parse some custom thing into a Buffer
 // app.use(bodyParser.raw({ type: 'application/vnd.custom-type' }))
 //
 // // parse an HTML body into a string
 // app.use(bodyParser.text({ type: 'text/html' }))
-
-
 
 const routes = [
     {
@@ -38,14 +36,14 @@ for (const route of routes) {
     if (route.methods) {
         methods = route.methods;
     } else if (route.handler) {
-        methods = route.handler
+        methods = route.handler;
     } else {
-        console.log('Error')
+        console.log('Error');
     }
 
     for (const methodType in methods) {
-        const method = methods[methodType]
-        app[methodType](route.route, method)
+        const method = methods[methodType];
+        app[methodType](route.route, method);
     }
 }
 

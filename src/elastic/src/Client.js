@@ -4,11 +4,11 @@ const elasticsearch = require('elasticsearch');
 const Adapter = require('./Adapter')
 
 module.exports = function Client (server, port, version, cache, index, type) {
-    this.server = server
+    this.server = server;
     this.port = port;
     this.version = version;
 
-    this.cache = cache
+    this.cache = cache;
 
     const getClient = () => {
         return new elasticsearch.Client({
@@ -24,17 +24,17 @@ module.exports = function Client (server, port, version, cache, index, type) {
     const search = async ({ bodyQuery, bodySource }) => {
         const query = {
             bool: {
-                filter: adapter.adaptFilters(bodyQuery)
-            }
-        }
+                filter: adapter.adaptFilters(bodyQuery),
+            },
+        };
 
         return await client.search({
           index: this.index || 'user_search*',
           type: this.type || '_doc',
           body: {
               query,
-              _source: bodySource
-          }
+              _source: bodySource,
+          },
         });
     };
 
@@ -42,21 +42,21 @@ module.exports = function Client (server, port, version, cache, index, type) {
         const query = {
             bool: {
                 filter: adapter.adaptFilters(bodyQuery)
-            }
-        }
+            },
+        };
 
         return await client.count({
           index: this.index || 'user_search*',
           type: this.type || '_doc',
           body: {
-              query
-          }
+              query,
+          },
         });
-    }
+    };
 
     return {
         search,
         count,
         query: adapter.adaptFilters
-    }
+    };
 }

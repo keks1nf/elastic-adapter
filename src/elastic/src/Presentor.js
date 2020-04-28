@@ -15,13 +15,13 @@ module.exports = function Presentor () {
                 return {
                     count: response.count,
                     isEmpty: false
-                }
+                };
             } else {
                 return {
                     count: 0,
                     isEmpty: true
                 };
             }
-        }
+        };
     };
 }
